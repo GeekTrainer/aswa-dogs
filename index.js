@@ -1,17 +1,20 @@
-const dogs = [
-    { name: 'Sammy' },
-    { name: 'Roscoe' },
-    { name: 'Su' },
-    { name: 'Wiggles' },
-    { name: 'Sophie' },
-]
+const dogs = []
 
 main();
 
-function main() {
+async function main() {
+    await loadDogs();
     displayDogs();
     document.getElementById('dog-save')
         .addEventListener('click', saveDog);
+}
+
+async function loadDogs() {
+    const response = await fetch('/api/dogs');
+    const retrievedDogs = await response.json();
+    for (let dog of retrievedDogs.dogs) {
+        dogs.push(dog);
+    }
 }
 
 function displayDogs() {
@@ -30,9 +33,22 @@ function addDogToDisplay(dog) {
     dogsListUI.appendChild(dogItem);
 }
 
-function saveDog() {
+async function saveDog() {
     const name = document.getElementById('dog-name').value;
     const dog = { name };
-    dogs.push(dog);
-    addDogToDisplay(dog);
+
+    const response = await fetch(
+        '/api/dogs',
+        {
+            method: 'POST',
+            body: JSON.stringify(dog),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+    );
+    const retrievedDog = await response.json();
+
+    dogs.push(retrievedDog);
+    addDogToDisplay(retrievedDog);
 }
