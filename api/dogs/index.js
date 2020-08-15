@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const models = require('../models');
 
-mongoose.connect(process.env.MONGO_URI);
+mongoose.connect(process.env.MONGO_URI, {useNewUrlParser:true});
 
 module.exports = async function (context, req) {
     // grab the response to setup what's going to be sent to the client
